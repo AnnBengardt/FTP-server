@@ -1,0 +1,30 @@
+User - Command - Body
+Admin - pwd
+Admin - pwd
+Admin - pwd
+Admin - pwd
+Admin - pwd
+Admin - pwd
+Admin - pwd
+Admin - pwd
+Admin - pwd
+Admin - pwd
+Admin - pwd
+Admin - pwd
+Admin - pwd
+Admin - pwd
+Admin - pwd
+Admin - pwd
+Admin - mkdir my-folder
+Admin - ls
+Admin - ls
+Admin - ls
+Admin - copied from server my-folder/my-file.txt
+Admin - copied from server my-folder/my-file.txt
+Admin - rename my-folder/hello.txt
+Admin - ls
+Admin - ls
+Admin - rmfile my-folder/hello.txt
+Admin - rmdir my-folder/
+Admin - ls
+Admin - disconnect
