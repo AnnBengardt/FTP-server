@@ -1,15 +1,42 @@
 import socket
 import os
 
-
 def process(req):
-    global users
-    user = users[0]
-    homedir = '/home/anna-beng/PycharmProjects/FTP/workspace/'
+    global user
+    if request.startswith('GET /connect/'):
+        print(users)
+        login_data = req.split()[1][9:]
+        login = login_data.split('/')[0]
+        password = login_data.split('/')[1]
+        if login in users.keys() and users[login] == password:
+            with open('/home/anna-beng/PycharmProjects/FTP/log.txt', 'a+') as log:
+                log.write(login + ' - logged in\n')
+                user = login
+        else:
+            user = None
+            return "Authorization failed"
+        return 'You have successfully logged in as ' + user
+
+    if req.startswith('GET /register/'):
+        login = req.split()[1][10:].split('/')[0]
+        password = req.split()[1][10:].split('/')[1]
+        if login not in users.keys():
+            users[login] = password
+            os.mkdir('/home/anna-beng/PycharmProjects/FTP/workspace/' + login)
+            with open('/home/anna-beng/PycharmProjects/FTP/log.txt', 'a+') as log:
+                log.write(login + ' - register\n')
+            return 'You have registered successfully'
+        else:
+            return 'Such user exists'
+
+    if not user:
+        return 'Authorization needed'
+    homedir = '/home/anna-beng/PycharmProjects/FTP/workspace/' + user + '/'
+
     if req.startswith('GET /pwd/'):
         with open('/home/anna-beng/PycharmProjects/FTP/log.txt', 'a+') as log:
             log.write(user + ' - pwd\n')
-        return str(os.getcwd())+'/workspace'
+        return str('workspace/'+user)
     elif req.startswith('GET /ls/'):
         folder_name = req.split()[1][4:]
         with open('/home/anna-beng/PycharmProjects/FTP/log.txt', 'a+') as log:
@@ -24,7 +51,7 @@ def process(req):
             os.mkdir(homedir + folder_name)
             with open('/home/anna-beng/PycharmProjects/FTP/log.txt', 'a+') as log:
                 log.write(user + ' - mkdir '+folder_name+'\n')
-            return 'Folder created'
+            return 'Folder created: ' + homedir + folder_name
         except OSError:
             return 'Error'
     elif req.startswith('GET /rmdir/'):
@@ -103,10 +130,11 @@ server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 server_socket.bind((SERVER_HOST, SERVER_PORT))
 server_socket.listen(5)
 print('Listening on port %s...' % SERVER_PORT)
-users = ['Admin']
-
+user = None
+users = {'Admin':'qwerty', 'UserOne':'12345'}
 
 while True:
+    content = ''
     conn, addr = server_socket.accept()
     request = conn.recv(8192).decode()
     print(request)
